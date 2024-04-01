@@ -30,4 +30,7 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .bg-dashed {
+    background: url(https://d35aaqx5ub95lt.cloudfront.net/images/06f94a15de0c0937cce25dc5dc083e6e.svg) 0 100% repeat-x;
+  }
 }
