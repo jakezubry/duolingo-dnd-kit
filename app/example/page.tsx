@@ -1,5 +1,5 @@
 import Image from "next/image";
-import {Exercise, MessageSvg} from "@/ui/vocabulary/exercise";
+import {Exercise, MessageSvg} from "@/ui/example/exercise";
 
 const dutchSentence = "Ze is een vrouw zonder kinderen.";
 export default function Home() {
@@ -13,7 +13,7 @@ export default function Home() {
         <div className='w-full h-44 flex'>
           {/* image */}
           <div className="w-32 h-full">
-            <Image src="/Eddy_2.webp" alt={""} width={128} height={176}/>
+            <Image src="/Eddy_2.webp" alt={""} width={128} height={176} priority={true}/>
           </div>
           {/* sentence cloud */}
           <div className="flex items-center justify-center w-full">

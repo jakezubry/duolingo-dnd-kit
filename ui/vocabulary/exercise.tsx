@@ -8,34 +8,42 @@ import {
   useSensor,
   useSensors
 } from "@dnd-kit/core";
-import {arrayMove, horizontalListSortingStrategy, SortableContext, sortableKeyboardCoordinates, useSortable} from '@dnd-kit/sortable';
-import {ReactNode, useState} from "react";
+import {
+  arrayMove,
+  horizontalListSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable
+} from '@dnd-kit/sortable';
+import {ReactNode, useId, useState} from "react";
 import {SiTeratail} from "react-icons/si";
 import {CSS} from "@dnd-kit/utilities";
 
 export function Exercise() {
   const [items, setItems] = useState(["word1", "word2"]);
   console.log(items)
-  
+  const dndContextId = useId();
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-
+  
   
   return (
-    <DndContext sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}>
+    <DndContext
+      sensors={sensors}
+      id={dndContextId}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}>
       <div className="flex flex-col gap-2">
         
         {/* answer droppable */}
         <div className="flex w-full border-t-2 border-b-2 border-zinc-300 min-h-16">
           {/*  draggable items */}
-
-          
+        
+        
         </div>
         {/* choice droppable */}
         <Choice id={1} words={items}/>
@@ -43,7 +51,7 @@ export function Exercise() {
     </DndContext>
   );
   
-  function handleDragEnd(event:any) {
+  function handleDragEnd(event: any) {
     console.log(items)
     const {active, over} = event;
     
@@ -81,8 +89,9 @@ export function Sortable({children, word}: { children?: ReactNode, word: string 
     </button>
   )
 }
-export function Choice({id, words} : {id:number, words: string[]}) {
-  const { setNodeRef } = useDroppable({ id });
+
+export function Choice({id, words}: { id: number, words: string[] }) {
+  const {setNodeRef} = useDroppable({id});
   
   return (
     <SortableContext
