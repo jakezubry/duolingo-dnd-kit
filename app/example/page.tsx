@@ -1,10 +1,11 @@
 import Image from "next/image";
-import {Exercise, MessageSvg} from "@/ui/example/exercise";
+import {Exercise} from "@/ui/example/exercise";
+import {MessageSvg} from "@/ui/example/message-svg";
 
 const dutchSentence = "Ze is een vrouw zonder kinderen.";
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-white">
+    <main className="flex min-h-screen flex-col items-center justify-center px-4 sm:px-12 md:px-24 bg-white">
       <div className="flex flex-col w-full md:w-[37.5rem]">
         <div className="w-full flex text-3xl font-bold text-zinc-700 pb-4">
           <h1> Write this in English</h1>
@@ -12,7 +13,7 @@ export default function Home() {
         {/* Sentence */}
         <div className='w-full h-44 flex'>
           {/* image */}
-          <div className="w-32 h-full">
+          <div className="w-32 h-full flex items-center justify-center">
             <Image src="/Eddy_2.webp" alt={""} width={128} height={176} priority={true}/>
           </div>
           {/* sentence cloud */}
