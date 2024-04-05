@@ -139,10 +139,37 @@ export function Exercise() {
       
       // If the over container is null, maybe it's droppable
       if (!overContainer) overContainer = findValueOfItems(over.id, 'droppable')
-      const droppable = true;
-      // If the active or over container is not found, return
-      if (!activeContainer || !overContainer) return;
-      console.log({"overContainer id": overContainer.id}, {"activeContainer id": activeContainer.id})
+      // if it's not droppable, then it's over item
+      const overItem = findValueOfItems(over.id, 'item');
+      // console.log({"overContainer id": overContainer?.id}, {"activeContainer id": activeContainer?.id})
+      // console.log((active.id.toString().includes('item') &&
+      //   over.id.toString().includes('item')) )
+      // Handle items sorting
+      // console.log(activeContainer, over)
+      if (overItem && activeContainer && active.id !== over.id) {
+        console.log("sorting", active.id, over.id)
+          // Find the index of the active and over item
+          const activeItemIndex = activeContainer.items.findIndex(
+            (item) => item.id === active.id.toString().replace("item-", ""),
+          );
+          const overItemIndex = activeContainer.items.findIndex(
+            (item) => item.id === over.id.toString().replace("item-", ""),
+          );
+          let newItems = [...containers];
+          const answerContainerIndex = 0;
+          // Swap the items
+          console.log("swap to", overItemIndex,"from", activeItemIndex)
+          newItems[answerContainerIndex].items = arrayMove(
+            activeContainer.items,
+            activeItemIndex,
+            overItemIndex,
+          );
+          setContainers(newItems);
+      }
+      
+      // If the active or over container is not found or overItem is found, return
+      if (!activeContainer || !overContainer || overItem) return;
+      // Handle wordbank sorting
       // Adding item to the Answers from Wordbank
       if (overContainer.id.toString().includes("answers") && activeContainer?.id.toString().includes("wordbank")) {
         
@@ -163,7 +190,6 @@ export function Exercise() {
         }
         return;
       }
-      
       // Dropping item inside Wordbank from Answers
       if (activeContainer.id.toString().includes("answers") &&
         overContainer.id.toString().includes("wordbank")) {
@@ -185,73 +211,8 @@ export function Exercise() {
         newItems[wordbankContainerIndex].items[overItemIndex].isItemInBank = true;
         // Updating the state
         setContainers(newItems);
-        
       }
-      
-    } else {
-      // nothing happens if over is null
-      return;
     }
-    
-    
-    // // Handle Items Sorting
-    // if (
-    //   active.id.toString().includes('item') &&
-    //   over?.id.toString().includes('item') &&
-    //   !over?.id?.toString().includes('droppable') &&
-    //   active &&
-    //   over &&
-    //   active.id !== over.id
-    // ) {
-    //   console.log("handle item sorting")
-    //   // Find the active container and over container
-    //   const activeContainer = findValueOfItems(active.id, 'item');
-    //   const overContainer = findValueOfItems(over.id, 'item');
-    //
-    //   // If the active or over container is not found, return
-    //   if (!activeContainer || !overContainer) return;
-    //
-    //   // Find the index of the active and over container
-    //   const activeContainerIndex = containers.findIndex(
-    //     (container) => container.id === activeContainer.id,
-    //   );
-    //   const overContainerIndex = containers.findIndex(
-    //     (container) => container.id === overContainer.id,
-    //   );
-    //
-    //   // Find the index of the active and over item
-    //   const activeItemIndex = activeContainer.items.findIndex(
-    //     (item) => item.id === active.id,
-    //   );
-    //   const overitemIndex = overContainer.items.findIndex(
-    //     (item) => item.id === over.id,
-    //   );
-    //   // In the same container
-    //   if (activeContainerIndex === overContainerIndex) {
-    //     let newItems = [...containers];
-    //     newItems[activeContainerIndex].items = arrayMove(
-    //       newItems[activeContainerIndex].items,
-    //       activeItemIndex,
-    //       overitemIndex,
-    //     );
-    //
-    //     setContainers(newItems);
-    //   } else {
-    //     // In different containers
-    //     let newItems = [...containers];
-    //     const [removedItem] = newItems[activeContainerIndex].items.splice(
-    //       activeItemIndex,
-    //       1,
-    //     );
-    //     newItems[overContainerIndex].items.splice(
-    //       overitemIndex,
-    //       0,
-    //       removedItem,
-    //     );
-    //     setContainers(newItems);
-    //   }
-    // }
-    
   };
   const onDragEnd = (event: DragEndEvent) => {
     const {active, over} = event;
@@ -268,7 +229,10 @@ export function Exercise() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+  // Handle item click
+  function handleItemClick(id: UniqueIdentifier) {
   
+  }
   return (
     <DndContext
       autoScroll={false}
