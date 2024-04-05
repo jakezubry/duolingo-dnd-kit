@@ -17,6 +17,7 @@ import SortableItem, {Answers} from "@/ui/example/answers";
 import {Item} from "@/ui/example/item";
 import {v4} from "uuid";
 import {WordBank} from "@/ui/example/word-bank";
+import {customCollisionDetectionAlgorithm} from "@/ui/example/customCollisionDetection";
 
 // data
 export type Word = {
@@ -98,15 +99,17 @@ export function Exercise() {
   
   // helpers
   function findValueOfItems(id: UniqueIdentifier, type: string): Container | undefined {
-    if (type === 'answers' || type === "wordbank") {
+    if (type === 'container') {
       return containers.find((container: Container) => container.id === id);
     }
-    
-    if (type === 'item') {
-      // replaces "item-" to "" to compare ids like "item-xxx-xxx-xxx-xxx" to "xxx-xxx-xxx-xxx"
-      const itemId = id.toString().replace("item-", "");
-      return containers.find((container: Container) =>
-        container.items.find((item: Word) => item.id === itemId),
+    if (type === 'item' || 'droppable') {
+      // replacing "item-" to "" to compare ids like "item-xxx-xxx-xxx-xxx" to "xxx-xxx-xxx-xxx"
+      const itemId = id.toString().replace(`${type}-`, "");
+      return containers.find((container: Container) => {
+          // if it's droppable, preventing looking for the item in the answers container
+          if (type === 'droppable' && container.id.toString().includes("answers")) return false
+          return container.items.find((item: Word) => item.id === itemId)
+        }
       );
     }
   }
@@ -125,40 +128,69 @@ export function Exercise() {
   const onDragStart = (event: DragStartEvent) => {
     setActiveId(event.active?.id);
   };
+  
   const onDragMove = (event: DragMoveEvent) => {
     const {active, over} = event;
-    console.log(active.id, over?.id);
-    if (over) {
-      // Adding item to the Answers
-      if (over.id.toString().includes("answers")) {
-        // Find the active container and over container
-        const activeContainer = findValueOfItems(active.id, 'item');
-        const overContainer = findValueOfItems(over.id, 'answers');
-        // If the active or over container is not found, return
-        if (!activeContainer || !overContainer) return;
+    // console.log(active.id, over?.id)
+    if (over && active) {
+      // Find the active item and over container
+      const activeContainer = findValueOfItems(active.id, 'item'); // active.id is always an item as we don't drag containers
+      let overContainer = findValueOfItems(over.id, 'container'); // doesn't matter if it's answer or wordbank, they are type of container
+      
+      // If the over container is null, maybe it's droppable
+      if (!overContainer) overContainer = findValueOfItems(over.id, 'droppable')
+      const droppable = true;
+      // If the active or over container is not found, return
+      if (!activeContainer || !overContainer) return;
+      console.log({"overContainer id": overContainer.id}, {"activeContainer id": activeContainer.id})
+      // Adding item to the Answers from Wordbank
+      if (overContainer.id.toString().includes("answers") && activeContainer?.id.toString().includes("wordbank")) {
         
         // Find the index of the active and over item
         const activeItemIndex = activeContainer.items.findIndex(
           (item) => item.id === active.id.toString().replace("item-", ""),
         );
-        console.log(activeItemIndex, active.id)
         const answersContainerIndex = 0;
         const wordbankContainerIndex = 1;
         const newItems = [...containers];
         const item = newItems[wordbankContainerIndex].items[activeItemIndex];
         // remove item from wordbank
         item.isItemInBank = false;
-        // add item to the answers if it's not there
+        // adding item to the answers if it's not there
         if (!newItems[answersContainerIndex].items.includes(item)) {
-          console.log("adding", item);
           newItems[answersContainerIndex].items.push(item);
           setContainers(newItems);
         }
         return;
       }
-      // Returning items to its initial position
-      // if (over.id.toString().includes("answers"))
       
+      // Dropping item inside Wordbank from Answers
+      if (activeContainer.id.toString().includes("answers") &&
+        overContainer.id.toString().includes("wordbank")) {
+        console.log("dropping the word back");
+        
+        // Find the index of the active and over item
+        const activeItemIndex = activeContainer.items.findIndex(
+          (item) => item.id === active.id.toString().replace("item-", ""),
+        );
+        const overItemIndex = overContainer.items.findIndex(
+          (item) => item.id === active.id.toString().replace("item-", ""),
+        );
+        const answersContainerIndex = 0;
+        const wordbankContainerIndex = 1;
+        const newItems = [...containers];
+        // Deleting the item from Answers
+        const [item] = newItems[answersContainerIndex].items.splice(activeItemIndex, 1);
+        // Changing isInBank property of the item
+        newItems[wordbankContainerIndex].items[overItemIndex].isItemInBank = true;
+        // Updating the state
+        setContainers(newItems);
+        
+      }
+      
+    } else {
+      // nothing happens if over is null
+      return;
     }
     
     
@@ -219,7 +251,7 @@ export function Exercise() {
     //     setContainers(newItems);
     //   }
     // }
-  
+    
   };
   const onDragEnd = (event: DragEndEvent) => {
     const {active, over} = event;
@@ -242,13 +274,13 @@ export function Exercise() {
       autoScroll={false}
       id={dndContextId}
       sensors={sensors}
-      // collisionDetection={rectangleIntersection} is set by default
+      collisionDetection={customCollisionDetectionAlgorithm}
       onDragStart={onDragStart}
       onDragMove={onDragMove}
       onDragEnd={onDragEnd}
       onDragCancel={onDragCancel}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-12">
         
         <Answers container={{...containers[0]}}/>
         <WordBank container={{...containers[1]}}/>
