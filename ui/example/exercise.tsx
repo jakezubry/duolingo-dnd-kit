@@ -74,12 +74,12 @@ const duoContainers: Container[] = [
         {
           id: `${v4()}`,
           word: `Item 7`,
-          isItemInBank: false,
+          isItemInBank: true,
         },
         {
           id: `${v4()}`,
           word: `Item 8`,
-          isItemInBank: false,
+          isItemInBank: true,
         },
         {
           id: `${v4()}`,
