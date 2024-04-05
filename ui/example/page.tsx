@@ -134,6 +134,7 @@ export default function Home() {
     if (
       active.id.toString().includes('item') &&
       over?.id.toString().includes('item') &&
+      
       active &&
       over &&
       active.id !== over.id

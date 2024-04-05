@@ -12,7 +12,7 @@ export function Answers({container}: { container: Container}) {
     <SortableContext
       items={container.items}
       strategy={horizontalListSortingStrategy}>
-      <div className="relative">
+      <div className="relative border border-blue-900">
         {/* lines */}
         <div className="overflow-hidden h-full w-full absolute">
           <div className="w-full h-16 border-t-2 border-zinc-300"></div>
@@ -43,7 +43,7 @@ export function DroppableContainer({id, children}: {
   items: Word[]
 }) {
   const {over, isOver, setNodeRef} = useDroppable({
-    id,
+    id, // answers-xxx-xxx-xxx-xxx...
     data: {type: "container"}
   })
   return (
@@ -71,7 +71,7 @@ export default function SortableItem({id, value}: { id: UniqueIdentifier, value:
     transform,
     transition
   } = useSortable({
-    id,
+    id: `item-${id}`,
     data: {type: "item"},
     transition: {
       duration: SORTABLE_TRANSITION_DURATION,
