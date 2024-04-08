@@ -43,50 +43,55 @@ const duoContainers: Container[] = [
       [
         {
           id: `${v4()}`,
-          word: `Item 1`,
+          word: `a`,
           isItemInBank: true,
         },
         {
           id: `${v4()}`,
-          word: `Item 2`,
+          word: `is`,
           isItemInBank: true,
         },
         {
           id: `${v4()}`,
-          word: `Item 3`,
+          word: `children`,
           isItemInBank: true,
         },
         {
           id: `${v4()}`,
-          word: `Item 4`,
+          word: `She`,
           isItemInBank: true,
         },
         {
           id: `${v4()}`,
-          word: `Item 5`,
+          word: `without`,
           isItemInBank: true,
         },
         {
           id: `${v4()}`,
-          word: `Item 6`,
+          word: `woman`,
           isItemInBank: true,
         },
         {
           id: `${v4()}`,
-          word: `Item 7`,
+          word: `none`,
           isItemInBank: true,
         },
         {
           id: `${v4()}`,
-          word: `Item 8`,
+          word: `adult`,
           isItemInBank: true,
         },
         {
           id: `${v4()}`,
-          word: `Item 9`,
+          word: `girl`,
           isItemInBank: true,
         },
-      ],
+        {
+          id: `${v4()}`,
+          word: `parent`,
+          isItemInBank: true,
+        }
+      ]
   }
 ]
 
