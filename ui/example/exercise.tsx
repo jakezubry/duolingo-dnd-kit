@@ -130,7 +130,6 @@ export function Exercise() {
   const onDragOver = (event: DragOverEvent) => {
     const {active, over} = event;
     if (over && active) {
-      // console.log(over.id, active.id)
       // Find the active item and over container
       const activeContainer = findValueOfItems(active.id, 'item'); // active.id is always an item as we don't drag containers
       let overContainer = findValueOfItems(over.id, 'container'); // doesn't matter if it's answer or wordbank, they are type of container
@@ -142,7 +141,6 @@ export function Exercise() {
       
       // Handle items sorting
       if (overItem && activeContainer && active.id !== over.id) {
-        console.log("sorting", active.id, over.id)
           // Find the index of the active and over item
           const activeItemIndex = activeContainer.items.findIndex(
             (item) => item.id === active.id.toString().replace("item-", ""),
@@ -154,14 +152,11 @@ export function Exercise() {
           let newItems = JSON.parse(JSON.stringify(containers)); // copy array with objects
           const answerContainerIndex = 0;
           // Swap the items
-          // console.log("swap to", overItemIndex,"from", activeItemIndex)
-          console.log(newItems[answerContainerIndex].items)
           newItems[answerContainerIndex].items = arrayMove(
             newItems[answerContainerIndex].items,
             activeItemIndex,
             overItemIndex,
           );
-          console.log(newItems[answerContainerIndex].items)
           setContainers(newItems);
       }
       
@@ -230,11 +225,11 @@ export function Exercise() {
       sensors={sensors}
       collisionDetection={customCollisionDetectionAlgorithm}
       onDragStart={onDragStart}
-      onDragOver={onDragOver}
+      onDragMove={onDragOver}
       // onDragEnd={onDragEnd}
       onDragCancel={onDragCancel}
     >
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-4">
         
         <Answers container={{...containers[0]}}/>
         <WordBank container={{...containers[1]}}/>

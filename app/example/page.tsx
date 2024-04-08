@@ -5,7 +5,7 @@ import {MessageSvg} from "@/ui/example/message-svg";
 const dutchSentence = "Ze is een vrouw zonder kinderen.";
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center px-4 sm:px-12 md:px-24 bg-white">
+    <main className="flex min-h-screen flex-col items-center justify-center px-1 sm:px-12 md:px-24 bg-white">
       <div className="flex flex-col w-full md:w-[37.5rem]">
         <div className="w-full flex text-3xl font-bold text-zinc-700 pb-4">
           <h1> Write this in English</h1>

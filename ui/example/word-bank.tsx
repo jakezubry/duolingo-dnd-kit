@@ -13,7 +13,7 @@ export function WordBank({container}: { container: Container }) {
   return (
     <div
       ref={setNodeRef}
-      className="border border-purple-900 w-full min-h-16 flex flex-wrap justify-center gap-2">
+      className="w-full min-h-16 flex flex-wrap justify-center gap-2">
       {container.items.map((item) => {
         return (
           <DroppableWord key={item.id} id={item.id} word={item.word} isItemInBank={item.isItemInBank}/>
@@ -36,7 +36,6 @@ export function DroppableWord({id, word, isItemInBank}: { id: UniqueIdentifier, 
           : <span
             className="flex md:h-12 min-h-12 items-center justify-center font-normal text-base rounded-xl border border-b-4 border-zinc-300 bg-transparent px-3 text-zinc-300 whitespace-nowrap">{word}</span>
       }
-      {/*<DraggableWord id={id} word={word}/>*/}
     </div>
   )
 }

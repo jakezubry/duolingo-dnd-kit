@@ -1,5 +1,5 @@
 import {
-  Active, ClientRect,
+  Active, ClientRect, closestCorners,
   Collision,
   DroppableContainer,
   pointerWithin,
@@ -23,6 +23,6 @@ export function customCollisionDetectionAlgorithm(args:Args): Collision[] {
     return pointerCollisions;
   }
   
-  // If no pointer collisions, check rectangle intersections
-  return rectIntersection(args);
+  // If no pointer collisions, check closest corners
+  return closestCorners(args);
 }

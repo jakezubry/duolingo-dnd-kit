@@ -12,7 +12,7 @@ export function Answers({container}: { container: Container}) {
     <SortableContext
       items={container.items}
       strategy={disableSortingStrategy}>
-      <div className="relative border border-blue-900">
+      <div className="relative ">
         {/* lines */}
         <div className="overflow-hidden h-full w-full absolute">
           <div className="w-full h-16 border-t-2 border-zinc-300"></div>
@@ -22,7 +22,7 @@ export function Answers({container}: { container: Container}) {
           <div className="w-full h-16 border-t-2 border-zinc-300"></div>
         </div>
         {/*  draggable items */}
-        <div className="flex w-full border-zinc-300 min-h-16">
+        <div className="flex w-full border-zinc-300 min-h-36">
           <DroppableContainer
             id={container.id}
             items={container.items}>
@@ -51,7 +51,7 @@ export function DroppableContainer({id, children}: {
   return (
     <div
       ref={setNodeRef}
-      className="flex gap-4 py-2 h-full w-full flex-wrap"
+      className="flex gap-4 py-2 min-h-full w-full flex-wrap"
     >
       {children ? (
         children

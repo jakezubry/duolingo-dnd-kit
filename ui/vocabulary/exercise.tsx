@@ -24,7 +24,6 @@ import {Item} from "@/ui/example/item";
 export function Exercise() {
   const [items, setItems] = useState<UniqueIdentifier[]>(["word1", "word2", "word3", "word4", "word5", "word6", "word7", "word8"]);
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
-  console.log(items)
   const dndContextId = useId();
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -83,7 +82,6 @@ export function Exercise() {
   }
   
   function handleDragEnd(event: DragEndEvent) {
-    console.log(items)
     const {active, over} = event;
     if (!over || !active) return
     if (active.id !== over?.id) {
@@ -165,7 +163,6 @@ export function Droppable({children, id}: { children?: ReactNode, id: string }) 
 
 export function MessageSvg() {
   return (
-    // <SiTeratail className="text-gray-500 -mr-0.5 bg-white" style={{rotate:"-90deg"}}/>
     <svg height="20" viewBox="0 0 18 20" width="18">
       <path className="text-white fill-white"
             d="M2.00358 19.0909H18V0.909058L0.624575 15.9561C-0.682507 17.088 0.198558 19.0909 2.00358 19.0909Z"></path>
