@@ -96,6 +96,7 @@ export function Exercise() {
   const [containers, setContainers] = useState<Container[]>(duoContainers);
   const [activeId, setActiveId] =
     useState<UniqueIdentifier | null>(null);
+  
   // helpers
   function findValueOfItems(id: UniqueIdentifier, type: string): Container | undefined {
     if (type === 'container') {
@@ -141,23 +142,23 @@ export function Exercise() {
       
       // Handle items sorting
       if (overItem && activeContainer && active.id !== over.id) {
-          // Find the index of the active and over item
-          const activeItemIndex = activeContainer.items.findIndex(
-            (item) => item.id === active.id.toString().replace("item-", ""),
-          );
-          const overItemIndex = activeContainer.items.findIndex(
-            (item) => item.id === over.id.toString().replace("item-", ""),
-          );
-          
-          let newItems = JSON.parse(JSON.stringify(containers)); // copy array with objects
-          const answerContainerIndex = 0;
-          // Swap the items
-          newItems[answerContainerIndex].items = arrayMove(
-            newItems[answerContainerIndex].items,
-            activeItemIndex,
-            overItemIndex,
-          );
-          setContainers(newItems);
+        // Find the index of the active and over item
+        const activeItemIndex = activeContainer.items.findIndex(
+          (item) => item.id === active.id.toString().replace("item-", ""),
+        );
+        const overItemIndex = activeContainer.items.findIndex(
+          (item) => item.id === over.id.toString().replace("item-", ""),
+        );
+        
+        let newItems = JSON.parse(JSON.stringify(containers)); // copy array with objects
+        const answerContainerIndex = 0;
+        // Swap the items
+        newItems[answerContainerIndex].items = arrayMove(
+          newItems[answerContainerIndex].items,
+          activeItemIndex,
+          overItemIndex,
+        );
+        setContainers(newItems);
       }
       
       // If the active or over container is not found or overItem is found, return
@@ -195,7 +196,7 @@ export function Exercise() {
         );
         const answersContainerIndex = 0;
         const wordbankContainerIndex = 1;
-        const newItems = [...containers];
+        let newItems = JSON.parse(JSON.stringify(containers));
         // Deleting the item from Answers
         const [item] = newItems[answersContainerIndex].items.splice(activeItemIndex, 1);
         // Changing isInBank property of the item
@@ -213,11 +214,53 @@ export function Exercise() {
     setActiveId(null);
   };
   
-  const sensors = useSensors(useSensor(TouchSensor),useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      // Require the mouse to move by 10 pixels before activating
+      activationConstraint: {
+        distance: 4,
+      },
+    }),
+    useSensor(TouchSensor, {
+      // Press delay of 250ms, with tolerance of 5px of movement
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  )
+  
   // TODO: Handle item click
   function handleItemClick(id: UniqueIdentifier) {
-  
+    const container = findValueOfItems(id, 'item');
+    if (!container) return
+    const answersContainerIndex = 0;
+    const wordbankContainerIndex = 1;
+    if (container.id.toString().includes("answers")) {
+      // move from answers to word bank
+      let newItems: Container[] = JSON.parse(JSON.stringify(containers));
+      let wordBankContainer:Container = newItems[wordbankContainerIndex];
+      const answersItemIndex = container.items.findIndex(
+        (item) => item.id === id.toString().replace("item-", ""),
+      );
+      const wordBankItemIndex = wordBankContainer.items.findIndex(
+        (item: Word) => item.id === id.toString().replace("item-", ""),
+      );
+      const [item] = newItems[answersContainerIndex].items.splice(answersItemIndex, 1);
+      newItems[wordbankContainerIndex].items[wordBankItemIndex].isItemInBank = true;
+      setContainers(newItems)
+    } else {
+      // move from word bank to answers
+      let newItems: Container[] = JSON.parse(JSON.stringify(containers));
+      const wordBankItemIndex = container.items.findIndex(
+        (item: Word) => item.id === id.toString().replace("item-", ""),
+      );
+      newItems[wordbankContainerIndex].items[wordBankItemIndex].isItemInBank = false;
+      newItems[answersContainerIndex].items.push(newItems[wordbankContainerIndex].items[wordBankItemIndex]);
+      setContainers(newItems);
+      
+    }
   }
+  
   return (
     <DndContext
       autoScroll={false}
@@ -231,8 +274,8 @@ export function Exercise() {
     >
       <div className="flex flex-col gap-4">
         
-        <Answers container={{...containers[0]}}/>
-        <WordBank container={{...containers[1]}}/>
+        <Answers container={{...containers[0]}} handleItemClick={handleItemClick}/>
+        <WordBank container={{...containers[1]}} handleItemClick={handleItemClick}/>
         <DragOverlay>
           {activeId && activeId.toString().includes('item') && (
             <Item

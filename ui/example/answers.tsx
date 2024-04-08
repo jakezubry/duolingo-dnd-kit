@@ -7,10 +7,11 @@ import {CSS} from "@dnd-kit/utilities";
 import {Container, Word} from "@/ui/example/exercise";
 import {Item} from "@/ui/example/item";
 
-export function Answers({container}: { container: Container}) {
+export function Answers({container, handleItemClick}: { container: Container, handleItemClick: any}) {
   return (
     <SortableContext
       items={container.items}
+      
       strategy={disableSortingStrategy}>
       <div className="relative ">
         {/* lines */}
@@ -27,7 +28,7 @@ export function Answers({container}: { container: Container}) {
             id={container.id}
             items={container.items}>
             {container.items.map((item) => {
-              return <SortableItem key={item.id} value={item.word} id={item.id}/>;
+              return <SortableItem key={item.id} value={item.word} id={item.id} handleItemClick={handleItemClick}/>;
             })}
           </DroppableContainer>
         </div>
@@ -65,7 +66,7 @@ export function DroppableContainer({id, children}: {
 }
 
 export const SORTABLE_TRANSITION_DURATION = 250;
-export default function SortableItem({id, value}: { id: UniqueIdentifier, value: string }) {
+export default function SortableItem({id, value, handleItemClick}: { id: UniqueIdentifier, value: string, handleItemClick: any }) {
   const {
     setNodeRef,
     listeners,
@@ -83,6 +84,8 @@ export default function SortableItem({id, value}: { id: UniqueIdentifier, value:
   
   return (
     <Item
+      id={id}
+      handleItemClick={handleItemClick}
       dragOverlay={false}
       ref={setNodeRef}
       value={value}

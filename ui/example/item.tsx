@@ -1,5 +1,6 @@
 import {forwardRef, memo} from "react";
 import {CSS} from "@dnd-kit/utilities";
+import {UniqueIdentifier} from "@dnd-kit/core";
 
 const boxShadowBorder =
   "0 0 0 calc(1px / var(--scale-x, 1)) rgba(63, 63, 68, 0.05)";
@@ -62,24 +63,28 @@ function getItemStyles({dragging, dragOverlay}: { dragging: boolean | undefined,
 type Ref = HTMLButtonElement;
 
 interface Props {
+  id:UniqueIdentifier,
   dragging?: boolean
   listeners?: any,
   transition?: string,
   transform?: any,
   value: string | number,
   dragOverlay?: boolean,
+  handleItemClick?: any
 }
 
 export const Item = memo(
   forwardRef<Ref, Props>(
     (
       {
+        id,
         dragOverlay,
         dragging,
         listeners,
         transition,
         transform,
         value,
+        handleItemClick,
         ...props
       },
       ref
@@ -92,6 +97,7 @@ export const Item = memo(
       return (
         <button
           ref={ref}
+          onClick={() => handleItemClick((`item-${id}`))}
           style={{
             transform: CSS.Transform.toString(transform),
             transition,
