@@ -11,7 +11,7 @@ export function Answers({container}: { container: Container}) {
   return (
     <SortableContext
       items={container.items}
-      strategy={horizontalListSortingStrategy}>
+      strategy={disableSortingStrategy}>
       <div className="relative border border-blue-900">
         {/* lines */}
         <div className="overflow-hidden h-full w-full absolute">
@@ -35,7 +35,9 @@ export function Answers({container}: { container: Container}) {
     </SortableContext>
   )
 }
-
+function disableSortingStrategy() {
+  return null;
+}
 
 export function DroppableContainer({id, children}: {
   id: UniqueIdentifier,

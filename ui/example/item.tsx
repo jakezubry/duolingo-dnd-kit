@@ -10,16 +10,16 @@ const boxShadow = `${boxShadowBorder}, ${boxShadowCommon}`;
 const wrapperDragOverlay = (dragOverlay: boolean | undefined) =>
   dragOverlay
     ? {
-      "--scale": 1,
-      "--box-shadow": boxShadow,
-      "--box-shadow-picked-up": {
-        "--box-shadow-picked-up": [
-          boxShadowBorder,
-          "-1px 0 15px 0 rgba(34, 33, 81, 0.01)",
-          "0px 15px 15px 0 rgba(34, 33, 81, 0.25)"
-        ].toString()
-      },
-      zIndex: 999
+      // "--scale": 1,
+      // "--box-shadow": boxShadow,
+      // "--box-shadow-picked-up": {
+      //   "--box-shadow-picked-up": [
+      //     boxShadowBorder,
+      //     "-1px 0 15px 0 rgba(34, 33, 81, 0.01)",
+      //     "0px 15px 15px 0 rgba(34, 33, 81, 0.25)"
+      //   ].toString()
+      // },
+      // zIndex: 999
     }
     : {};
 
@@ -39,17 +39,17 @@ const popKeyframes = `
 function getItemStyles({dragging, dragOverlay}: { dragging: boolean | undefined, dragOverlay: boolean | undefined }) {
   if (dragOverlay) {
     return {
-      cursor: "inherit",
-      animation: `${popKeyframes} 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22)`,
-      transform: "scale(var(--scale))",
-      boxShadow: "var(--box-shadow-picked-up)",
+      // cursor: "inherit",
+      // animation: `${popKeyframes} 200ms cubic-bezier(0.18, 0.67, 0.6, 1.22)`,
+      // transform: "scale(var(--scale))",
+      // boxShadow: "var(--box-shadow-picked-up)",
       opacity: 1
     };
   }
   
   if (dragging) {
     return {
-      opacity: "var(--dragging-opacity, 0.25)",
+      opacity: 0,
       zIndex: 0,
       
       "&:focus": {
@@ -68,7 +68,6 @@ interface Props {
   transform?: any,
   value: string | number,
   dragOverlay?: boolean,
-  style?: any
 }
 
 export const Item = memo(
@@ -81,40 +80,42 @@ export const Item = memo(
         transition,
         transform,
         value,
-        style,
         ...props
       },
       ref
     ) => {
+      const style = {
+      //   transform: CSS.Transform.toString(transform),
+      //   transition,
+      };
       // console.log(CSS.Transform.toString(transform))
       return (
         <button
           ref={ref}
           style={{
-            // transform: CSS.Transform.toString(transform),
+            transform: CSS.Transform.toString(transform),
             transition,
             touchAction: "manipulation",
             ...wrapperDragOverlay(dragOverlay),
-            height: 8
+            height: 8,
+            WebkitTapHighlightColor: "transparent", // for mobile
+            
+            // only show focus outline when using keyboard
+            // "&:focusVisible": {
+            //   boxShadow: "outline",
+            //   touchAction: "none",
+            //   userSelect: "none",
+            //   WebkitUserSelect: "none"
+            // },
+            
+            ...getItemStyles({dragging, dragOverlay}),
+            ...style
           }}
           className={"flex md:h-12 min-h-12 items-center justify-center text-zinc-700 font-normal text-base rounded-xl border border-b-4 border-zinc-300 bg-white"}
         >
           <div
             className="relative flex grow items-center justify-between text-zinc-900 px-3 whitespace-nowrap rounded-sm cursor-grab"
-            style={{
-              WebkitTapHighlightColor: "transparent", // for mobile
-              
-              // only show focus outline when using keyboard
-              "&:focusVisible": {
-                boxShadow: "outline",
-                touchAction: "none",
-                userSelect: "none",
-                WebkitUserSelect: "none"
-              },
-              
-              ...getItemStyles({dragging, dragOverlay}),
-              ...style
-            }}
+  
             {...listeners}
             {...props}
             tabIndex={0}>

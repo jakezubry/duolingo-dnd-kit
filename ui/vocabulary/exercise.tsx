@@ -1,12 +1,13 @@
 'use client'
 import {
   closestCenter,
-  DndContext, KeyboardSensor,
+  DndContext, DragOverlay, KeyboardSensor,
   PointerSensor,
   useDraggable,
   useDroppable,
   useSensor,
-  useSensors
+  useSensors,
+  DragEndEvent, UniqueIdentifier, DragStartEvent, DragCancelEvent, DragOverEvent
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -18,9 +19,11 @@ import {
 import {ReactNode, useId, useState} from "react";
 import {SiTeratail} from "react-icons/si";
 import {CSS} from "@dnd-kit/utilities";
+import {Item} from "@/ui/example/item";
 
 export function Exercise() {
-  const [items, setItems] = useState(["word1", "word2"]);
+  const [items, setItems] = useState<UniqueIdentifier[]>(["word1", "word2", "word3", "word4", "word5", "word6", "word7", "word8"]);
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   console.log(items)
   const dndContextId = useId();
   const sensors = useSensors(
@@ -36,7 +39,11 @@ export function Exercise() {
       sensors={sensors}
       id={dndContextId}
       collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}>
+      onDragStart={handleDragStart}
+      onDragMove={handleDragOver}
+      onDragCancel={handleDragCancel}
+      onDragEnd={handleDragEnd}
+    >
       <div className="flex flex-col gap-2">
         
         {/* answer droppable */}
@@ -47,15 +54,39 @@ export function Exercise() {
         </div>
         {/* choice droppable */}
         <Choice id={1} words={items}/>
+        <DragOverlay>
+          {activeId ? <Sortable word={activeId} dragOverlay/> : null}
+        </DragOverlay>
       </div>
     </DndContext>
   );
   
-  function handleDragEnd(event: any) {
+  function handleDragStart(event: DragStartEvent) {
+    setActiveId(event.active.id);
+  }
+  
+  function handleDragCancel(event: DragCancelEvent) {
+    setActiveId(null);
+  }
+  
+  function handleDragOver(event: DragOverEvent) {
+    const {active, over} = event;
+    if (!over || !active) return
+    if (active.id !== over?.id) {
+      setItems((items) => {
+        const oldIndex = items.indexOf(active.id);
+        const newIndex = items.indexOf(over.id);
+        
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  }
+  
+  function handleDragEnd(event: DragEndEvent) {
     console.log(items)
     const {active, over} = event;
-    
-    if (active.id !== over.id) {
+    if (!over || !active) return
+    if (active.id !== over?.id) {
       setItems((items) => {
         const oldIndex = items.indexOf(active.id);
         const newIndex = items.indexOf(over.id);
@@ -66,19 +97,48 @@ export function Exercise() {
   }
 }
 
+export function Choice({id, words}: { id: number, words: UniqueIdentifier[] }) {
+  const {setNodeRef} = useDroppable({id});
+  
+  return (
+    <div className="flex items-center justify-center w-full gap-2 flex-wrap" ref={setNodeRef}>
+      <SortableContext
+        items={words}
+        strategy={disableSortingStrategy}
+      >
+        {/* word that I will wrap as the draggable */}
+        {
+          words.map((word) => {
+            return <Sortable key={word} word={word}/>
+          })
+        }
+      </SortableContext>
+    </div>
+  )
+}
 
-export function Sortable({children, word}: { children?: ReactNode, word: string }) {
+function disableSortingStrategy() {
+  return null;
+}
+
+export function Sortable({children, word, dragOverlay}: {
+  children?: ReactNode,
+  word: UniqueIdentifier,
+  dragOverlay?: boolean
+}) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
     transition,
-  } = useSortable({id: word});
+    isDragging
+  } = useSortable({id: word},);
   
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
+    opacity: isDragging ? 0.3 : 1
   };
   
   return (
@@ -90,25 +150,6 @@ export function Sortable({children, word}: { children?: ReactNode, word: string 
   )
 }
 
-export function Choice({id, words}: { id: number, words: string[] }) {
-  const {setNodeRef} = useDroppable({id});
-  
-  return (
-    <SortableContext
-      items={words}
-      strategy={horizontalListSortingStrategy}
-    >
-      <div className="flex items-center justify-center w-full gap-2 flex-wrap" ref={setNodeRef}>
-        {/* word that I will wrap as the draggable */}
-        {
-          words.map((word) => {
-            return <Sortable key={word} word={word}/>
-          })
-        }
-      </div>
-    </SortableContext>
-  )
-}
 
 export function Droppable({children, id}: { children?: ReactNode, id: string }) {
   const {isOver, setNodeRef} = useDroppable({
