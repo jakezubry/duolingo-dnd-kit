@@ -166,6 +166,7 @@ export function Exercise() {
       // Adding item to the Answers from Wordbank
       if (overContainer.id.toString().includes("answers") && activeContainer?.id.toString().includes("wordbank")) {
         
+        
         // Find the index of the active and over item
         const activeItemIndex = activeContainer.items.findIndex(
           (item) => item.id === active.id.toString().replace("item-", ""),
@@ -218,18 +219,17 @@ export function Exercise() {
     useSensor(PointerSensor, {
       // Require the mouse to move by 10 pixels before activating
       activationConstraint: {
-        distance: 4,
+        distance: 2,
       },
     }),
     useSensor(TouchSensor, {
       // Press delay of 250ms, with tolerance of 5px of movement
       activationConstraint: {
-        distance: 5,
+        distance: 2,
       },
     })
   )
   
-  // TODO: Handle item click
   function handleItemClick(id: UniqueIdentifier) {
     const container = findValueOfItems(id, 'item');
     if (!container) return
@@ -269,7 +269,6 @@ export function Exercise() {
       collisionDetection={customCollisionDetectionAlgorithm}
       onDragStart={onDragStart}
       onDragMove={onDragOver}
-      // onDragEnd={onDragEnd}
       onDragCancel={onDragCancel}
     >
       <div className="flex flex-col gap-4">

@@ -63,7 +63,7 @@ function getItemStyles({dragging, dragOverlay}: { dragging: boolean | undefined,
 type Ref = HTMLButtonElement;
 
 interface Props {
-  id:UniqueIdentifier,
+  id?:UniqueIdentifier,
   dragging?: boolean
   listeners?: any,
   transition?: string,
