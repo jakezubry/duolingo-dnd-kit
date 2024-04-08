@@ -95,7 +95,7 @@ export const Item = memo(
           style={{
             transform: CSS.Transform.toString(transform),
             transition,
-            touchAction: "manipulation",
+            touchAction: "none",
             ...wrapperDragOverlay(dragOverlay),
             height: 8,
             WebkitTapHighlightColor: "transparent", // for mobile
