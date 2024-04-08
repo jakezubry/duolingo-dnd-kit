@@ -144,7 +144,7 @@ export function Sortable({children, word, dragOverlay}: {
   return (
     <button
       ref={setNodeRef} style={style} {...listeners} {...attributes}
-      className="flex items-center justify-center px-4 py-1 text-zinc-700 font-normal text-lg min-h-14 rounded-xl border border-b-4 border-zinc-300 bg-white">
+      className="flex items-center justify-center px-4 py-1 text-zinc-700 font-normal text-lg min-h-14 rounded-xl border border-b-4 border-zinc-300 bg-white touch-none">
       <span>{word}</span>
     </button>
   )

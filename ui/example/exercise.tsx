@@ -6,7 +6,7 @@ import {
   DragOverlay,
   DragStartEvent,
   KeyboardSensor,
-  PointerSensor,
+  PointerSensor, Sensor, TouchSensor,
   UniqueIdentifier,
   useSensor,
   useSensors
@@ -218,12 +218,7 @@ export function Exercise() {
     setActiveId(null);
   };
   
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+  const sensors = useSensors(useSensor(TouchSensor),useSensor(PointerSensor));
   // TODO: Handle item click
   function handleItemClick(id: UniqueIdentifier) {
   
